@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fireworks Display</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+      color: white;
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    #fireworkCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #buttonWrapper {
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+    }
+
+    button {
+      font-size: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="buttonWrapper">
+    <button onclick="launchFirework()">🎆 Launch Firework!</button>
+  </div>
+  <canvas id="fireworkCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("fireworkCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    function launchFirework() {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height / 2;
+      const colors = ["red", "yellow", "cyan", "lime", "orange", "pink", "white"];
+      const particles = [];
+
+      for (let i = 0; i < 50; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          dx: (Math.random() - 0.5) * 6,
+          dy: (Math.random() - 0.5) * 6,
+          alpha: 1,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+
+      const animate = () => {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.alpha -= 0.01;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.color === "white" ? "255,255,255" : p.color},${p.alpha})`;
+          ctx.fill();
+        });
+
+        particles.filter(p => p.alpha > 0.01).length > 0 && requestAnimationFrame(animate);
+      };
+
+      animate();
+    }
+  </script>
+</body>
+</html>
